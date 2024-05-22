@@ -1,0 +1,867 @@
+globals:
+  - id: rele1On
+    type: bool
+    restore_value: yes
+  - id: rele2On
+    type: bool
+    restore_value: yes
+  - id: rele3On
+    type: bool
+    restore_value: yes
+  - id: rele4On
+    type: bool
+    restore_value: yes
+  - id: rele5On
+    type: bool
+    restore_value: yes
+  - id: rele6On
+    type: bool
+    restore_value: yes
+  - id: rele7On
+    type: bool
+    restore_value: yes
+  - id: rele8On
+    type: bool
+    restore_value: yes
+
+preferences:
+  flash_write_interval: 20s
+
+esphome:
+  name: esp32testes
+  friendly_name: ESP32Testes
+  on_boot:
+    priority: -100
+    then:
+      - if:
+          condition:
+            lambda: 'return ((id(rele1last).state == "Restore_Last_State") && (id(rele1On)));'
+          then:
+            switch.turn_on: rele1
+      - if:
+          condition:
+            lambda: 'return id(rele1last).state == "Always_On";'
+          then:
+            switch.turn_on: rele1
+      - if:
+          condition:
+            lambda: 'return ((id(rele2last).state == "Restore_Last_State") && (id(rele2On)));'
+          then:
+            switch.turn_on: rele2
+      - if:
+          condition:
+            lambda: 'return id(rele2last).state == "Always_On";'
+          then:
+            switch.turn_on: rele2
+      - if:
+          condition:
+            lambda: 'return ((id(rele3last).state == "Restore_Last_State") && (id(rele3On)));'
+          then:
+            switch.turn_on: rele3
+      - if:
+          condition:
+            lambda: 'return id(rele3last).state == "Always_On";'
+          then:
+            switch.turn_on: rele3
+      - if:
+          condition:
+            lambda: 'return ((id(rele4last).state == "Restore_Last_State") && (id(rele4On)));'
+          then:
+            switch.turn_on: rele4
+      - if:
+          condition:
+            lambda: 'return id(rele4last).state == "Always_On";'
+          then:
+            switch.turn_on: rele4
+      - if:
+          condition:
+            lambda: 'return ((id(rele5last).state == "Restore_Last_State") && (id(rele5On)));'
+          then:
+            switch.turn_on: rele5
+      - if:
+          condition:
+            lambda: 'return id(rele5last).state == "Always_On";'
+          then:
+            switch.turn_on: rele5
+      - if:
+          condition:
+            lambda: 'return ((id(rele6last).state == "Restore_Last_State") && (id(rele6On)));'
+          then:
+            switch.turn_on: rele6
+      - if:
+          condition:
+            lambda: 'return id(rele6last).state == "Always_On";'
+          then:
+            switch.turn_on: rele6
+      - if:
+          condition:
+            lambda: 'return ((id(rele7last).state == "Restore_Last_State") && (id(rele7On)));'
+          then:
+            switch.turn_on: rele7
+      - if:
+          condition:
+            lambda: 'return id(rele7last).state == "Always_On";'
+          then:
+            switch.turn_on: rele7
+      - if:
+          condition:
+            lambda: 'return ((id(rele8last).state == "Restore_Last_State") && (id(rele8On)));'
+          then:
+            switch.turn_on: rele8
+      - if:
+          condition:
+            lambda: 'return id(rele8last).state == "Always_On";'
+          then:
+            switch.turn_on: rele8
+#      - delay: 15s
+#      - logger.log:
+#          format: "Valor da variável global Rele1On: %d"
+#          args: [ 'id(rele1On)' ]
+#      - logger.log:
+#          format: "Valor da variável global Rele2On: %d"
+#          args: [ 'id(rele2On)' ]
+#      - logger.log:
+#          format: "Valor da variável global Rele3On: %d"
+#          args: [ 'id(rele3On)' ]
+#      - logger.log:
+#          format: "Valor da variável global Rele4On: %d"
+#          args: [ 'id(rele4On)' ]
+#      - logger.log:
+#          format: "Valor da variável global Rele5On: %d"
+#          args: [ 'id(rele5On)' ]
+#      - logger.log:
+#          format: "Valor da variável global Rele6On: %d"
+#          args: [ 'id(rele6On)' ]
+#      - logger.log:
+#          format: "Valor da variável global Rele7On: %d"
+#          args: [ 'id(rele7On)' ]
+#      - logger.log:
+#          format: "Valor da variável global Rele8On: %d"
+#          args: [ 'id(rele8On)' ]
+          
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+  level: INFO
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "<incluir sua chave API>"
+
+ota:
+  password: "<incluir sua chave OTA>"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Esp32Testes Fallback Hotspot"
+    password: "UF0mv8X6x8PP"
+
+captive_portal:
+
+button:
+  - platform: restart
+    name: "Reiniciar"
+
+dallas:
+  - pin: 25
+    update_interval: 10s
+    id: linha1
+
+select:
+  - platform: template
+    name: "Rele 1 PowerOnState"
+    optimistic: true
+    restore_value: true
+    icon: mdi:power-cycle
+    options:
+      - Restore_Last_State
+      - Always_Off
+      - Always_On
+    id: rele1last
+    entity_category: config
+  - platform: template
+    name: "Rele 2 PowerOnState"
+    optimistic: true
+    restore_value: true
+    icon: mdi:power-cycle
+    options:
+      - Restore_Last_State
+      - Always_Off
+      - Always_On
+    id: rele2last
+    entity_category: config
+  - platform: template
+    name: "Rele 3 PowerOnState"
+    optimistic: true
+    restore_value: true
+    icon: mdi:power-cycle
+    options:
+      - Restore_Last_State
+      - Always_Off
+      - Always_On
+    id: rele3last
+    entity_category: config
+  - platform: template
+    name: "Rele 4 PowerOnState"
+    optimistic: true
+    restore_value: true
+    icon: mdi:power-cycle
+    options:
+      - Restore_Last_State
+      - Always_Off
+      - Always_On
+    id: rele4last
+    entity_category: config
+  - platform: template
+    name: "Rele 5 PowerOnState"
+    optimistic: true
+    restore_value: true
+    icon: mdi:power-cycle
+    options:
+      - Restore_Last_State
+      - Always_Off
+      - Always_On
+    id: rele5last
+    entity_category: config
+  - platform: template
+    name: "Rele 6 PowerOnState"
+    optimistic: true
+    restore_value: true
+    icon: mdi:power-cycle
+    options:
+      - Restore_Last_State
+      - Always_Off
+      - Always_On
+    id: rele6last
+    entity_category: config
+  - platform: template
+    name: "Rele 7 PowerOnState"
+    optimistic: true
+    restore_value: true
+    icon: mdi:power-cycle
+    options:
+      - Restore_Last_State
+      - Always_Off
+      - Always_On
+    id: rele7last
+    entity_category: config
+  - platform: template
+    name: "Rele 8 PowerOnState"
+    optimistic: true
+    restore_value: true
+    icon: mdi:power-cycle
+    options:
+      - Restore_Last_State
+      - Always_Off
+      - Always_On
+    id: rele8last
+    entity_category: config
+
+  - platform: template
+    name: "Interruptor 1 Tipo"
+    optimistic: true
+    restore_value: true
+    icon: mdi:cog-box
+    options:
+      - Comum
+      - Pulso
+      - Cenas
+    id: interruptor1tipo
+    entity_category: config
+  - platform: template
+    name: "Interruptor 2 Tipo"
+    optimistic: true
+    restore_value: true
+    icon: mdi:cog-box
+    options:
+      - Comum
+      - Pulso
+      - Cenas
+    id: interruptor2tipo
+    entity_category: config
+  - platform: template
+    name: "Interruptor 3 Tipo"
+    optimistic: true
+    restore_value: true
+    icon: mdi:cog-box
+    options:
+      - Comum
+      - Pulso
+      - Cenas
+    id: interruptor3tipo
+    entity_category: config
+  - platform: template
+    name: "Interruptor 4 Tipo"
+    optimistic: true
+    restore_value: true
+    icon: mdi:cog-box
+    options:
+      - Comum
+      - Pulso
+      - Cenas
+    id: interruptor4tipo
+    entity_category: config
+  - platform: template
+    name: "Interruptor 5 Tipo"
+    optimistic: true
+    restore_value: true
+    icon: mdi:cog-box
+    options:
+      - Comum
+      - Pulso
+      - Cenas
+    id: interruptor5tipo
+    entity_category: config
+  - platform: template
+    name: "Interruptor 6 Tipo"
+    optimistic: true
+    restore_value: true
+    icon: mdi:cog-box
+    options:
+      - Comum
+      - Pulso
+      - Cenas
+    id: interruptor6tipo
+    entity_category: config
+  - platform: template
+    name: "Interruptor 7 Tipo"
+    optimistic: true
+    restore_value: true
+    icon: mdi:cog-box
+    options:
+      - Comum
+      - Pulso
+      - Cenas
+    id: interruptor7tipo
+    entity_category: config
+  - platform: template
+    name: "Interruptor 8 Tipo"
+    optimistic: true
+    restore_value: true
+    icon: mdi:cog-box
+    options:
+      - Comum
+      - Pulso
+      - Cenas
+    id: interruptor8tipo
+    entity_category: config
+
+script:
+  - id: rele1statechanged
+    mode: restart
+    then:
+      - if:
+          condition:
+            switch.is_on: rele1
+          then:
+            - globals.set:
+                id: rele1On
+                value: 'true'
+#            - logger.log:
+#                format: "Valor da variável global: %d"
+#                args: [ 'id(rele1On)' ]
+          else:
+            - globals.set:
+                id: rele1On
+                value: 'false'
+#      - if:
+#          condition:
+#            switch.is_off: rele1
+#          then:
+#            - globals.set:
+#                id: rele1On
+#                value: 'false'
+#            - logger.log:
+#                format: "Valor da variável global: %d"
+#                args: [ 'id(rele1On)' ]
+  - id: rele2statechanged
+    mode: restart
+    then:
+      - if:
+          condition:
+            switch.is_on: rele2
+          then:
+            - globals.set:
+                id: rele2On
+                value: 'true'
+#            - logger.log:
+#                format: "Valor da variável global: %d"
+#                args: [ 'id(rele2On)' ]
+          else:
+            - globals.set:
+                id: rele2On
+                value: 'false'
+#      - if:
+#          condition:
+#            switch.is_off: rele2
+#          then:
+#            - globals.set:
+#                id: rele2On
+#                value: 'false'
+#            - logger.log:
+#                format: "Valor da variável global: %d"
+#                args: [ 'id(rele2On)' ]
+  - id: rele3statechanged
+    mode: restart
+    then:
+      - if:
+          condition:
+            switch.is_on: rele3
+          then:
+            - globals.set:
+                id: rele3On
+                value: 'true'
+#            - logger.log:
+#                format: "Valor da variável global: %d"
+#                args: [ 'id(rele3On)' ]
+          else:
+            - globals.set:
+                id: rele3On
+                value: 'false'
+#      - if:
+#          condition:
+#            switch.is_off: rele3
+#          then:
+#            - globals.set:
+#                id: rele3On
+#                value: 'false'
+#            - logger.log:
+#                format: "Valor da variável global: %d"
+#                args: [ 'id(rele3On)' ]
+  - id: rele4statechanged
+    mode: restart
+    then:
+      - if:
+          condition:
+            switch.is_on: rele4
+          then:
+            - globals.set:
+                id: rele4On
+                value: 'true'
+#            - logger.log:
+#                format: "Valor da variável global: %d"
+#                args: [ 'id(rele4On)' ]
+          else:
+            - globals.set:
+                id: rele4On
+                value: 'false'
+#      - if:
+#          condition:
+#            switch.is_off: rele4
+#          then:
+#            - globals.set:
+#                id: rele4On
+#                value: 'false'
+#            - logger.log:
+#                format: "Valor da variável global: %d"
+#                args: [ 'id(rele4On)' ]
+  - id: rele5statechanged
+    mode: restart
+    then:
+      - if:
+          condition:
+            switch.is_on: rele5
+          then:
+            - globals.set:
+                id: rele5On
+                value: 'true'
+#            - logger.log:
+#                format: "Valor da variável global: %d"
+#                args: [ 'id(rele5On)' ]
+          else:
+            - globals.set:
+                id: rele5On
+                value: 'false'
+#      - if:
+#          condition:
+#            switch.is_off: rele5
+#          then:
+#            - globals.set:
+#                id: rele5On
+#                value: 'false'
+#            - logger.log:
+#                format: "Valor da variável global: %d"
+#                args: [ 'id(rele5On)' ]
+  - id: rele6statechanged
+    mode: restart
+    then:
+      - if:
+          condition:
+            switch.is_on: rele6
+          then:
+            - globals.set:
+                id: rele6On
+                value: 'true'
+#            - logger.log:
+#                format: "Valor da variável global: %d"
+#                args: [ 'id(rele6On)' ]
+          else:
+            - globals.set:
+                id: rele6On
+                value: 'false'
+#      - if:
+#          condition:
+#            switch.is_off: rele6
+#          then:
+#            - globals.set:
+#                id: rele6On
+#                value: 'false'
+#            - logger.log:
+#                format: "Valor da variável global: %d"
+#                args: [ 'id(rele6On)' ]
+  - id: rele7statechanged
+    mode: restart
+    then:
+      - if:
+          condition:
+            switch.is_on: rele7
+          then:
+            - globals.set:
+                id: rele7On
+                value: 'true'
+#            - logger.log:
+#                format: "Valor da variável global: %d"
+#                args: [ 'id(rele7On)' ]
+          else:
+            - globals.set:
+                id: rele7On
+                value: 'false'
+#      - if:
+#          condition:
+#            switch.is_off: rele7
+#          then:
+#            - globals.set:
+#                id: rele7On
+#                value: 'false'
+#            - logger.log:
+#                format: "Valor da variável global: %d"
+#                args: [ 'id(rele7On)' ]
+  - id: rele8statechanged
+    mode: restart
+    then:
+      - if:
+          condition:
+            switch.is_on: rele8
+          then:
+            - globals.set:
+                id: rele8On
+                value: 'true'
+#            - logger.log:
+#                format: "Valor da variável global: %d"
+#                args: [ 'id(rele8On)' ]
+          else:
+            - globals.set:
+                id: rele8On
+                value: 'false'
+#      - if:
+#          condition:
+#            switch.is_off: rele8
+#          then:
+#            - globals.set:
+#                id: rele8On
+#                value: 'false'
+#            - logger.log:
+#                format: "Valor da variável global: %d"
+#                args: [ 'id(rele8On)' ]
+
+switch:
+  - platform: gpio
+    pin: 13
+    inverted: true
+    name: "Rele 1"
+    id: rele1
+    restore_mode: DISABLED
+    on_turn_on:
+      script.execute: rele1statechanged
+    on_turn_off:
+      script.execute: rele1statechanged
+  - platform: gpio
+    pin: 12
+    inverted: true
+    name: "Rele 2"
+    id: rele2
+    restore_mode: DISABLED
+    on_turn_on:
+      script.execute: rele2statechanged
+    on_turn_off:
+      script.execute: rele2statechanged
+  - platform: gpio
+    pin: 14
+    inverted: true
+    name: "Rele 3"
+    id: rele3
+    restore_mode: DISABLED
+    on_turn_on:
+      script.execute: rele3statechanged
+    on_turn_off:
+      script.execute: rele3statechanged
+  - platform: gpio
+    pin: 27
+    inverted: true
+    name: "Rele 4"
+    id: rele4
+    restore_mode: DISABLED
+    on_turn_on:
+      script.execute: rele4statechanged
+    on_turn_off:
+      script.execute: rele4statechanged
+  - platform: gpio
+    pin: 5
+    inverted: true
+    name: "Rele 5"
+    id: rele5
+    restore_mode: DISABLED
+    on_turn_on:
+      script.execute: rele5statechanged
+    on_turn_off:
+      script.execute: rele5statechanged
+  - platform: gpio
+    pin: 18
+    inverted: true
+    name: "Rele 6"
+    id: rele6
+    restore_mode: DISABLED
+    on_turn_on:
+      script.execute: rele6statechanged
+    on_turn_off:
+      script.execute: rele6statechanged
+  - platform: gpio
+    pin: 19
+    inverted: true
+    name: "Rele 7"
+    id: rele7
+    restore_mode: DISABLED
+    on_turn_on:
+      script.execute: rele7statechanged
+    on_turn_off:
+      script.execute: rele7statechanged
+  - platform: gpio
+    pin: 21
+    inverted: true
+    name: "Rele 8"
+    id: rele8
+    restore_mode: DISABLED
+    on_turn_on:
+      script.execute: rele8statechanged
+    on_turn_off:
+      script.execute: rele8statechanged
+
+  - platform: template
+    name: "Todos"
+    id: rele_todos
+    optimistic: true
+    restore_mode: DISABLED
+    on_turn_on: 
+      then:
+        - switch.turn_on: rele1
+        - switch.turn_on: rele2
+        - switch.turn_on: rele3
+        - switch.turn_on: rele4
+        - switch.turn_on: rele5
+        - switch.turn_on: rele6
+        - switch.turn_on: rele7
+        - switch.turn_on: rele8
+    on_turn_off: 
+      then:
+        - switch.turn_off: rele1
+        - switch.turn_off: rele2
+        - switch.turn_off: rele3
+        - switch.turn_off: rele4
+        - switch.turn_off: rele5
+        - switch.turn_off: rele6
+        - switch.turn_off: rele7
+        - switch.turn_off: rele8
+  - platform: template        
+    name: "Interruptor 1 Conectado"
+    id: interruptor1conectado
+    optimistic: true
+    restore_mode: RESTORE_DEFAULT_OFF
+    icon: mdi:connection
+    entity_category: config
+  - platform: template        
+    name: "Interruptor 2 Conectado"
+    id: interruptor2conectado
+    optimistic: true
+    restore_mode: RESTORE_DEFAULT_OFF
+    icon: mdi:connection
+    entity_category: config
+  - platform: template        
+    name: "Interruptor 3 Conectado"
+    id: interruptor3conectado
+    optimistic: true
+    restore_mode: RESTORE_DEFAULT_OFF
+    icon: mdi:connection
+    entity_category: config
+  - platform: template        
+    name: "Interruptor 4 Conectado"
+    id: interruptor4conectado
+    optimistic: true
+    restore_mode: RESTORE_DEFAULT_OFF
+    icon: mdi:connection
+    entity_category: config
+  - platform: template        
+    name: "Interruptor 5 Conectado"
+    id: interruptor5conectado
+    optimistic: true
+    restore_mode: RESTORE_DEFAULT_OFF
+    icon: mdi:connection
+    entity_category: config
+  - platform: template        
+    name: "Interruptor 6 Conectado"
+    id: interruptor6conectado
+    optimistic: true
+    restore_mode: RESTORE_DEFAULT_OFF
+    icon: mdi:connection
+    entity_category: config
+  - platform: template        
+    name: "Interruptor 7 Conectado"
+    id: interruptor7conectado
+    optimistic: true
+    restore_mode: RESTORE_DEFAULT_OFF
+    icon: mdi:connection
+    entity_category: config
+  - platform: template        
+    name: "Interruptor 8 Conectado"
+    id: interruptor8conectado
+    optimistic: true
+    restore_mode: RESTORE_DEFAULT_OFF
+    icon: mdi:connection
+    entity_category: config
+
+text_sensor:
+  - platform: template
+    name: "Interruptor 1 Ação"
+    icon: mdi:gesture-tap-button
+    id: interruptor1acao
+  - platform: template
+    name: "Interruptor 2 Ação"
+    icon: mdi:gesture-tap-button
+    id: interruptor2acao
+  - platform: template
+    name: "Interruptor 3 Ação"
+    icon: mdi:gesture-tap-button
+    id: interruptor3acao
+  - platform: template
+    name: "Interruptor 4 Ação"
+    icon: mdi:gesture-tap-button
+    id: interruptor4acao
+  - platform: template
+    name: "Interruptor 5 Ação"
+    icon: mdi:gesture-tap-button
+    id: interruptor5acao
+  - platform: template
+    name: "Interruptor 6 Ação"
+    icon: mdi:gesture-tap-button
+    id: interruptor6acao
+  - platform: template
+    name: "Interruptor 7 Ação"
+    icon: mdi:gesture-tap-button
+    id: interruptor7acao
+  - platform: template
+    name: "Interruptor 8 Ação"
+    icon: mdi:gesture-tap-button
+    id: interruptor8acao
+
+  - platform: version
+    name: "Versão ESPHome"
+
+  - platform: wifi_info
+    ip_address:
+      name: IP
+    ssid:
+      name: SSID
+    bssid:
+      name: BSSID
+    mac_address:
+      name: WiFi Mac Address
+    dns_address:
+      name: DNS
+
+sensor:
+  - platform: wifi_signal
+    name: "Sinal WiFi"
+    update_interval: 60s
+    entity_category: diagnostic
+  - platform: dallas
+    dallas_id: linha1
+    address: 0xa37c4ef61d64ff28
+    name: "Sensor Temp 1"
+  - platform: dallas
+    dallas_id: linha1
+    address: 0x811b4ff61d64ff28
+    name: "Sensor Temp 2"
+
+binary_sensor:
+  - platform: gpio
+    pin: 
+      number: 26
+      inverted: true
+      mode:
+        input: true
+        pullup: true
+    name: "Interruptor 1"
+    id: interruptor1
+    on_press:
+      then:
+        if:
+          condition:
+            lambda: 'return ((id(interruptor1tipo).state == "Comum") && (id(interruptor1conectado).state) || (id(interruptor1tipo).state == "Pulso") && (id(interruptor1conectado).state));'
+          then:
+            switch.toggle: rele1
+    on_release:
+      then:
+        if:
+          condition:
+            lambda: 'return ((id(interruptor1tipo).state == "Comum") && (id(interruptor1conectado).state));'
+          then:
+            switch.toggle: rele1
+    on_multi_click:
+      - timing:
+        - ON for at most 900ms
+        - OFF for at least 600ms
+        then:
+          - text_sensor.template.publish:
+              id: interruptor1acao
+              state: "1_single"
+          - delay: 1s
+          - text_sensor.template.publish:
+              id: interruptor1acao
+              state: "Nenhuma"
+      - timing:
+          - ON for at most 500ms
+          - OFF for at most 400ms
+          - ON for at most 500ms
+          - OFF for at least 250ms
+        then:
+          - text_sensor.template.publish:
+              id: interruptor1acao
+              state: "1_double"
+          - delay: 1s
+          - text_sensor.template.publish:
+              id: interruptor1acao
+              state: "Nenhuma"
+      - timing:
+          - ON for at least 1s
+        then:
+          - text_sensor.template.publish:
+              id: interruptor1acao
+              state: "1_hold"
+          - delay: 1s
+          - text_sensor.template.publish:
+              id: interruptor1acao
+              state: "Nenhuma"
+
+web_server:
+  port: 80
+  auth:
+    username: admin
+    password: admin
