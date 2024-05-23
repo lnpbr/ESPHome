@@ -1,0 +1,679 @@
+globals:
+  - id: rele1On
+    type: bool
+    restore_value: yes
+  - id: rele2On
+    type: bool
+    restore_value: yes
+  - id: rele3On
+    type: bool
+    restore_value: yes
+  - id: rele4On
+    type: bool
+    restore_value: yes
+
+#preferences:
+#  flash_write_interval: 20s
+
+esphome:
+  name: kinconya4
+  friendly_name: KinConyA4
+  on_boot:
+    priority: -100
+    then:
+      - if:
+          condition:
+            lambda: 'return ((id(rele1last).state == "Restore_Last_State") && (id(rele1On)));'
+          then:
+            switch.turn_on: rele1
+      - if:
+          condition:
+            lambda: 'return id(rele1last).state == "Always_On";'
+          then:
+            switch.turn_on: rele1
+      - if:
+          condition:
+            lambda: 'return ((id(rele2last).state == "Restore_Last_State") && (id(rele2On)));'
+          then:
+            switch.turn_on: rele2
+      - if:
+          condition:
+            lambda: 'return id(rele2last).state == "Always_On";'
+          then:
+            switch.turn_on: rele2
+      - if:
+          condition:
+            lambda: 'return ((id(rele3last).state == "Restore_Last_State") && (id(rele3On)));'
+          then:
+            switch.turn_on: rele3
+      - if:
+          condition:
+            lambda: 'return id(rele3last).state == "Always_On";'
+          then:
+            switch.turn_on: rele3
+      - if:
+          condition:
+            lambda: 'return ((id(rele4last).state == "Restore_Last_State") && (id(rele4On)));'
+          then:
+            switch.turn_on: rele4
+      - if:
+          condition:
+            lambda: 'return id(rele4last).state == "Always_On";'
+          then:
+            switch.turn_on: rele4
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+  level: INFO
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "<chave API>"
+
+ota:
+  password: "<chave OTA>"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+button:
+  - platform: restart
+    name: "Reiniciar"
+
+select:
+  - platform: template
+    name: "Rele 1 PowerOnState"
+    optimistic: true
+    restore_value: true
+    icon: mdi:power-cycle
+    options:
+      - Restore_Last_State
+      - Always_Off
+      - Always_On
+    id: rele1last
+    entity_category: config
+  - platform: template
+    name: "Rele 2 PowerOnState"
+    optimistic: true
+    restore_value: true
+    icon: mdi:power-cycle
+    options:
+      - Restore_Last_State
+      - Always_Off
+      - Always_On
+    id: rele2last
+    entity_category: config
+  - platform: template
+    name: "Rele 3 PowerOnState"
+    optimistic: true
+    restore_value: true
+    icon: mdi:power-cycle
+    options:
+      - Restore_Last_State
+      - Always_Off
+      - Always_On
+    id: rele3last
+    entity_category: config
+  - platform: template
+    name: "Rele 4 PowerOnState"
+    optimistic: true
+    restore_value: true
+    icon: mdi:power-cycle
+    options:
+      - Restore_Last_State
+      - Always_Off
+      - Always_On
+    id: rele4last
+    entity_category: config
+
+  - platform: template
+    name: "Interruptor 1 Tipo"
+    optimistic: true
+    restore_value: true
+    icon: mdi:cog-box
+    options:
+      - Comum
+      - Pulso
+      - Cenas
+    id: interruptor1tipo
+    entity_category: config
+  - platform: template
+    name: "Interruptor 2 Tipo"
+    optimistic: true
+    restore_value: true
+    icon: mdi:cog-box
+    options:
+      - Comum
+      - Pulso
+      - Cenas
+    id: interruptor2tipo
+    entity_category: config
+  - platform: template
+    name: "Interruptor 3 Tipo"
+    optimistic: true
+    restore_value: true
+    icon: mdi:cog-box
+    options:
+      - Comum
+      - Pulso
+      - Cenas
+    id: interruptor3tipo
+    entity_category: config
+  - platform: template
+    name: "Interruptor 4 Tipo"
+    optimistic: true
+    restore_value: true
+    icon: mdi:cog-box
+    options:
+      - Comum
+      - Pulso
+      - Cenas
+    id: interruptor4tipo
+    entity_category: config
+
+script:
+  - id: rele1statechanged
+    mode: restart
+    then:
+      - if:
+          condition:
+            switch.is_on: rele1
+          then:
+            - globals.set:
+                id: rele1On
+                value: 'true'
+          else:
+            - globals.set:
+                id: rele1On
+                value: 'false'
+  - id: rele2statechanged
+    mode: restart
+    then:
+      - if:
+          condition:
+            switch.is_on: rele2
+          then:
+            - globals.set:
+                id: rele2On
+                value: 'true'
+          else:
+            - globals.set:
+                id: rele2On
+                value: 'false'
+  - id: rele3statechanged
+    mode: restart
+    then:
+      - if:
+          condition:
+            switch.is_on: rele3
+          then:
+            - globals.set:
+                id: rele3On
+                value: 'true'
+          else:
+            - globals.set:
+                id: rele3On
+                value: 'false'
+  - id: rele4statechanged
+    mode: restart
+    then:
+      - if:
+          condition:
+            switch.is_on: rele4
+          then:
+            - globals.set:
+                id: rele4On
+                value: 'true'
+          else:
+            - globals.set:
+                id: rele4On
+                value: 'false'
+
+# Individual outputs
+switch:
+  - platform: gpio
+    name: "Rele 1"
+    pin: 2
+    inverted: false
+    id: rele1
+    restore_mode: DISABLED
+    on_turn_on:
+      script.execute: rele1statechanged
+    on_turn_off:
+      script.execute: rele1statechanged
+
+  - platform: gpio
+    name: "Rele 2"
+    pin: 15
+    inverted: false
+    id: rele2
+    restore_mode: DISABLED
+    on_turn_on:
+      script.execute: rele2statechanged
+    on_turn_off:
+      script.execute: rele2statechanged
+
+  - platform: gpio
+    name: "Rele 3"
+    pin: 5
+    inverted: false
+    id: rele3
+    restore_mode: DISABLED
+    on_turn_on:
+      script.execute: rele3statechanged
+    on_turn_off:
+      script.execute: rele3statechanged
+
+  - platform: gpio
+    name: "Rele 4"
+    pin: 4
+    inverted: false
+    id: rele4
+    restore_mode: DISABLED
+    on_turn_on:
+      script.execute: rele4statechanged
+    on_turn_off:
+      script.execute: rele4statechanged
+
+  - platform: gpio
+    name: "Buzzer"
+    pin: 18
+    inverted: false
+    id: buzzer
+
+  - platform: template
+    name: "Todos"
+    id: rele_todos
+    optimistic: true
+    restore_mode: DISABLED
+    on_turn_on: 
+      then:
+        - switch.turn_on: rele1
+        - switch.turn_on: rele2
+        - switch.turn_on: rele3
+        - switch.turn_on: rele4
+    on_turn_off: 
+      then:
+        - switch.turn_off: rele1
+        - switch.turn_off: rele2
+        - switch.turn_off: rele3
+        - switch.turn_off: rele4
+
+  - platform: template        
+    name: "Interruptor 1 Conectado"
+    id: interruptor1conectado
+    optimistic: true
+    restore_mode: RESTORE_DEFAULT_OFF
+    icon: mdi:connection
+    entity_category: config
+  - platform: template        
+    name: "Interruptor 2 Conectado"
+    id: interruptor2conectado
+    optimistic: true
+    restore_mode: RESTORE_DEFAULT_OFF
+    icon: mdi:connection
+    entity_category: config
+  - platform: template        
+    name: "Interruptor 3 Conectado"
+    id: interruptor3conectado
+    optimistic: true
+    restore_mode: RESTORE_DEFAULT_OFF
+    icon: mdi:connection
+    entity_category: config
+  - platform: template        
+    name: "Interruptor 4 Conectado"
+    id: interruptor4conectado
+    optimistic: true
+    restore_mode: RESTORE_DEFAULT_OFF
+    icon: mdi:connection
+    entity_category: config
+
+text_sensor:
+  - platform: template
+    name: "Interruptor 1 Ação"
+    icon: mdi:gesture-tap-button
+    id: interruptor1acao
+  - platform: template
+    name: "Interruptor 2 Ação"
+    icon: mdi:gesture-tap-button
+    id: interruptor2acao
+  - platform: template
+    name: "Interruptor 3 Ação"
+    icon: mdi:gesture-tap-button
+    id: interruptor3acao
+  - platform: template
+    name: "Interruptor 4 Ação"
+    icon: mdi:gesture-tap-button
+    id: interruptor4acao
+
+  - platform: wifi_info
+    ip_address:
+      name: IP
+    ssid:
+      name: SSID
+    bssid:
+      name: BSSID
+    mac_address:
+      name: WiFi Mac Address
+    dns_address:
+      name: DNS
+
+binary_sensor:
+  - platform: gpio
+    name: "Interruptor 1"
+    pin:
+      number: 36
+      inverted: true
+    id: interruptor1
+    on_press:
+      then:
+        if:
+          condition:
+            lambda: 'return ((id(interruptor1tipo).state == "Comum") && (id(interruptor1conectado).state) || (id(interruptor1tipo).state == "Pulso") && (id(interruptor1conectado).state));'
+          then:
+            switch.toggle: rele1
+    on_release:
+      then:
+        if:
+          condition:
+            lambda: 'return ((id(interruptor1tipo).state == "Comum") && (id(interruptor1conectado).state));'
+          then:
+            switch.toggle: rele1
+    on_multi_click:
+      - timing:
+        - ON for at most 900ms
+        - OFF for at least 600ms
+        then:
+          - text_sensor.template.publish:
+              id: interruptor1acao
+              state: "1_single"
+          - delay: 1s
+          - text_sensor.template.publish:
+              id: interruptor1acao
+              state: "Nenhuma"
+      - timing:
+          - ON for at most 500ms
+          - OFF for at most 400ms
+          - ON for at most 500ms
+          - OFF for at least 250ms
+        then:
+          - text_sensor.template.publish:
+              id: interruptor1acao
+              state: "1_double"
+          - delay: 1s
+          - text_sensor.template.publish:
+              id: interruptor1acao
+              state: "Nenhuma"
+      - timing:
+          - ON for at least 1s
+        then:
+          - text_sensor.template.publish:
+              id: interruptor1acao
+              state: "1_hold"
+          - delay: 1s
+          - text_sensor.template.publish:
+              id: interruptor1acao
+              state: "Nenhuma"
+
+  - platform: gpio
+    name: "Interruptor 2"
+    pin:
+      number: 39
+      inverted: true
+    id: interruptor2
+    on_press:
+      then:
+        if:
+          condition:
+            lambda: 'return ((id(interruptor2tipo).state == "Comum") && (id(interruptor2conectado).state) || (id(interruptor2tipo).state == "Pulso") && (id(interruptor2conectado).state));'
+          then:
+            switch.toggle: rele2
+    on_release:
+      then:
+        if:
+          condition:
+            lambda: 'return ((id(interruptor2tipo).state == "Comum") && (id(interruptor2conectado).state));'
+          then:
+            switch.toggle: rele2
+    on_multi_click:
+      - timing:
+        - ON for at most 900ms
+        - OFF for at least 600ms
+        then:
+          - text_sensor.template.publish:
+              id: interruptor2acao
+              state: "1_single"
+          - delay: 1s
+          - text_sensor.template.publish:
+              id: interruptor2acao
+              state: "Nenhuma"
+      - timing:
+          - ON for at most 500ms
+          - OFF for at most 400ms
+          - ON for at most 500ms
+          - OFF for at least 250ms
+        then:
+          - text_sensor.template.publish:
+              id: interruptor2acao
+              state: "1_double"
+          - delay: 1s
+          - text_sensor.template.publish:
+              id: interruptor2acao
+              state: "Nenhuma"
+      - timing:
+          - ON for at least 1s
+        then:
+          - text_sensor.template.publish:
+              id: interruptor2acao
+              state: "1_hold"
+          - delay: 1s
+          - text_sensor.template.publish:
+              id: interruptor2acao
+              state: "Nenhuma"
+
+  - platform: gpio
+    name: "Interruptor 3"
+    pin:
+      number: 27
+      inverted: true
+    id: interruptor3
+    on_press:
+      then:
+        if:
+          condition:
+            lambda: 'return ((id(interruptor3tipo).state == "Comum") && (id(interruptor3conectado).state) || (id(interruptor3tipo).state == "Pulso") && (id(interruptor3conectado).state));'
+          then:
+            switch.toggle: rele3
+    on_release:
+      then:
+        if:
+          condition:
+            lambda: 'return ((id(interruptor3tipo).state == "Comum") && (id(interruptor3conectado).state));'
+          then:
+            switch.toggle: rele3
+    on_multi_click:
+      - timing:
+        - ON for at most 900ms
+        - OFF for at least 600ms
+        then:
+          - text_sensor.template.publish:
+              id: interruptor3acao
+              state: "1_single"
+          - delay: 1s
+          - text_sensor.template.publish:
+              id: interruptor3acao
+              state: "Nenhuma"
+      - timing:
+          - ON for at most 500ms
+          - OFF for at most 400ms
+          - ON for at most 500ms
+          - OFF for at least 250ms
+        then:
+          - text_sensor.template.publish:
+              id: interruptor3acao
+              state: "1_double"
+          - delay: 1s
+          - text_sensor.template.publish:
+              id: interruptor3acao
+              state: "Nenhuma"
+      - timing:
+          - ON for at least 1s
+        then:
+          - text_sensor.template.publish:
+              id: interruptor3acao
+              state: "1_hold"
+          - delay: 1s
+          - text_sensor.template.publish:
+              id: interruptor3acao
+              state: "Nenhuma"
+
+  - platform: gpio
+    name: "Interruptor 4"
+    pin:
+      number: 14
+      inverted: true
+    id: interruptor4
+    on_press:
+      then:
+        if:
+          condition:
+            lambda: 'return ((id(interruptor4tipo).state == "Comum") && (id(interruptor4conectado).state) || (id(interruptor4tipo).state == "Pulso") && (id(interruptor4conectado).state));'
+          then:
+            switch.toggle: rele4
+    on_release:
+      then:
+        if:
+          condition:
+            lambda: 'return ((id(interruptor4tipo).state == "Comum") && (id(interruptor4conectado).state));'
+          then:
+            switch.toggle: rele4
+    on_multi_click:
+      - timing:
+        - ON for at most 900ms
+        - OFF for at least 600ms
+        then:
+          - text_sensor.template.publish:
+              id: interruptor4acao
+              state: "1_single"
+          - delay: 1s
+          - text_sensor.template.publish:
+              id: interruptor4acao
+              state: "Nenhuma"
+      - timing:
+          - ON for at most 500ms
+          - OFF for at most 400ms
+          - ON for at most 500ms
+          - OFF for at least 250ms
+        then:
+          - text_sensor.template.publish:
+              id: interruptor4acao
+              state: "1_double"
+          - delay: 1s
+          - text_sensor.template.publish:
+              id: interruptor4acao
+              state: "Nenhuma"
+      - timing:
+          - ON for at least 1s
+        then:
+          - text_sensor.template.publish:
+              id: interruptor4acao
+              state: "1_hold"
+          - delay: 1s
+          - text_sensor.template.publish:
+              id: interruptor4acao
+              state: "Nenhuma"
+
+dallas:
+  - pin: 13
+    id: dallas1
+    update_interval: 10s
+
+sensor:
+  - platform: wifi_signal
+    name: "Sinal WiFi"
+    update_interval: 30s
+    entity_category: diagnostic
+
+  - platform: adc
+    pin: 33
+    name: "ADC4 0-5V"
+    update_interval: 2s
+    attenuation: 11db
+    filters:
+      - lambda:
+          if (x >= 3.11) {
+            return x * 1.60256;
+          } else if (x <= 0.15) {
+            return 0;
+          } else {
+            return x * 1.51;
+          }
+  - platform: adc
+    pin: 32
+    name: "ADC3 0-5V"
+    update_interval: 2s
+    attenuation: 11db
+    filters:
+      - lambda:
+          if (x >= 3.11) {
+            return x * 1.60256;
+          } else if (x <= 0.15) {
+            return 0;
+          } else {
+            return x * 1.51;
+          }
+  - platform: adc
+    pin: 35
+    name: "ADC2 4-20mA"
+    update_interval: 2s
+    unit_of_measurement: mA
+    attenuation: 11db
+    filters:
+      - multiply: 6.66666666
+  - platform: adc
+    pin: 34
+    name: "ADC1 4-20mA"
+    update_interval: 2s
+    unit_of_measurement: mA
+    attenuation: 11db
+    filters:
+      - multiply: 6.66666666
+
+output:
+  - platform: esp32_dac
+    pin: 26
+    id: da1
+  - platform: esp32_dac
+    pin: 25
+    id: da2
+
+number:
+  - platform: template
+    name: "Saída 1"
+    optimistic: true
+    min_value: 0
+    max_value: 10
+    step: 1
+    on_value:
+      then:
+        - output.set_level:
+            id: da1
+            level: !lambda "return x*10/100;"
+  - platform: template
+    name: "Saída 2"
+    optimistic: true
+    min_value: 0
+    max_value: 10
+    step: 1
+    on_value:
+      then:
+        - output.set_level:
+            id: da2
+            level: !lambda "return x*10/100;"
